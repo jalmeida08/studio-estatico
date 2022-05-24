@@ -1,0 +1,19 @@
+<div class="row g-0">
+    <div class="col-sm-12">
+        <div class="row g-0">
+            <div class="col-4">
+                <div class="list-group">
+                    <button 
+                        type="button"
+                        class="list-group-item list-group-item-action maozinha"
+                        *ngFor="let item of listaProcedimento"
+                        (click)="selecionarProcedimento(item)"
+                        [ngClass]="{'active': item === procedimentoSelecionado}"
+                        >
+                        {{ item.nome }}
+                    </button>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>

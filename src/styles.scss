@@ -1,0 +1,27 @@
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
+.maozinha:hover {
+    cursor: pointer;
+}
+
+.text-right{
+    text-align: right;
+}
+
+.bloquea {
+    cursor: not-allowed;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0.3;
+    background: #FFF
+    
+}
+
+.valor-cortado {
+    text-decoration: line-through;
+    color: #FF0000;
+}

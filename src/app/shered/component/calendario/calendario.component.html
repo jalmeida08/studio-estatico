@@ -1,0 +1,27 @@
+<main>
+    <div class="calendar">
+        <div class="titulo-mes" style="background-color: orange;">
+            <div class="row">
+                <div class="col-2">
+                    <span class="seta-calendario-esquerda" (click)="voltarMes()"><</span>
+                </div>
+                <div class="col">
+                    <time style="top: 13px;position: relative;">{{ nomeMes }} {{ ano }}</time>
+                </div>
+                <div class="col-2">
+                    <span class="seta-calendario-direita" (click)="avancarMes()">></span>
+                </div>
+            </div>
+            
+        </div>
+        <div class="dias-semana">
+            <div *ngFor="let item of arrayDiasSemana">{{item}}</div>
+        </div>
+        <div class="date-grid" >
+            <button *ngFor="let dia of arrayDiasMes" [ngClass]="diaInitCalendar" [ngStyle]="verificarEstilo(dia)" (click)="selecionarDia(dia)">
+                <time datetime="arrayDiasMes" >{{ dia | date:'dd' }}</time>
+            </button>
+            
+        </div>
+    </div>
+</main>

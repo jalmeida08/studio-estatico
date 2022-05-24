@@ -1,0 +1,234 @@
+
+
+<!-- GRUPO DE BOTÕES -->
+<div class="row mb-2">
+    <div class="col">
+        <button
+        title="Cadastrar um novo cliente"
+        class="btn btn-primary me-2"
+        (click)="exibirTelaNovoCliente()">
+            <i class="bi bi-person-plus-fill"></i>
+        </button>
+        <button
+        title="Buscar cliete por nome ou data de nascimento"
+        class="btn btn-primary me-2"
+        (click)="exibirTelaBuscaCliente()">
+            <i class="bi bi-search"></i>
+        </button>
+        <button
+        title="Adicionar procedimento"
+        class="btn btn-primary "
+        (click)="exibirTelaProcedimento()">
+            <i class="bi bi-bag-plus"></i>
+            Procedimento
+        </button>
+    </div>
+</div>
+
+<div class="row">
+
+    <!-- FORMULÁRIO DO ATENDIMENTO -->
+    <div class="col-sm-4">
+        <form [formGroup]="formAtendimento" (submit)="validaAtendimento()">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row g-0">
+                            <div class="col">
+                                <div class="form-floating mb-3 me-3">
+                                    <input
+                                    formControlName="dataAtendimento"
+                                    type="date"
+                                    class="form-control"
+                                    id="timestampAtendimento"
+                                    >
+                                    <label for="timestampAtendimento">Data Atendimento</label>
+                                </div>
+                            </div>
+    
+                            <div class="col">
+                                <div class="form-floating mb-3">
+                                    <input
+                                    formControlName="horaAtendimento"
+                                    type="time"
+                                    class="form-control"
+                                    id="horaAtendimento"
+                                    >
+                                    <label for="horaAtendimento">Hora Atendimento</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="desconto" formControlName="desconto" (ngModelChange)="calcularDesconto()">
+                                <label for="floatingInput">Desconto</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="text-align: right;">
+                    <a [routerLink]="[]" (click)="buscaAgenda()" class="btn btn-primary me-2">Buscar Agenda</a>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- CARD DO ATENDIMENTO -->
+    <div class="col-sm-3">
+        <div class="card border-dark mb-3" style="max-width: 18rem;">
+            <div class="card-header">
+                <div class="row g-0">
+                    <div class="col-11">
+                        Atendimento
+                    </div>
+                    <div class="col">
+                        <a
+                            [routerLink]="[]"
+                            title="Excluir atendimento"
+                            (click)="excluirAtendimento()"
+                            >
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body text-dark">
+                <h6 class="card-title text-center">{{ cliente?.nome }}</h6>
+                <div class="card-text" *ngFor="let item of listaPocedimentoSelecionado">
+                    <div class="col-12">
+                        <span>Procedimento: {{ item.nome }}</span>
+                    </div>
+                    <div class="col-12">
+                        <small>Valor: {{item.valor | currency: 'BRL'}} </small>
+                    </div>
+                    
+                    <div class="col-12">
+                        <small>Duração: {{ mostrarDuracao(item.tempoDuracao) }} </small>
+                    </div>
+                    
+                    <div class="col-12">
+                        <small>Profissional: {{ funcionarioAtendimento?.nome }}</small>
+                    </div>
+                    <hr *ngIf="listaPocedimentoSelecionado.length > 1 && (listaPocedimentoSelecionado.indexOf(item)+1) < listaPocedimentoSelecionado.length">
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-dark" *ngIf="listaPocedimentoSelecionado.length > 0">
+                <div class="row g-0">
+                    <div class="col">
+                        <small>Duração</small>
+                    </div>
+                    <div class="col text-right" >
+                        <small>{{ mostrarDuracao(tempoTotalAtendimento) }}</small>
+                    </div>
+                </div>
+                <div class="row g-0"  [ngClass]="{'valor-cortado': totalComDesconto}">
+                    <div class="col">
+                        <small>Total</small>
+                    </div>
+                    <div class="col text-right">
+                        <small>{{ valorTotalAtendimento | currency: 'BRL'}}</small>
+                    </div>
+                </div>
+                <div class="row g-0" *ngIf="totalComDesconto && totalComDesconto > 0">
+                    <div class="col">
+                        <small>Total</small>
+                    </div>
+                    <div class="col text-right">
+                        <small>{{ totalComDesconto | currency: 'BRL'}}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AGENDA FUNCI SELECIONADO -->
+    <div class="col">
+        <div class="col" *ngIf="listaAtendimentoDiaPesquisado">
+            <ul class="lista-atendimento" *ngIf="listaAtendimentoDiaPesquisado.length > 0; else semAtendimento">
+               <li class="item-atendimento" *ngFor="let item of listaAtendimentoDiaPesquisado">
+                    <i class="bi bi-journal-check me-2"></i>
+                   {{ item.dataHoraAtendimento | date: "dd/MM 'de' HH:mm"}}
+                   {{ item.dataHoraFimAtendimento | date: "' até ' HH:mm"}}
+               </li> 
+            </ul>
+            <ng-template #semAtendimento>
+                <ul class="lista-atendimento" >
+                    <li>Funcionário sem atendimento no dia selecionado</li>
+                </ul>
+            </ng-template>
+        </div>
+    </div>
+</div>
+
+
+<modal-app
+    tituloModal="Bucar Cliente"
+    idModal="buscaPorCliente"
+    [modalEvent]="controleModaisAndBotoes.modalEventBuscaCliente"
+    [listaBotao]="controleModaisAndBotoes.listaBotaoBuscaCliente"
+>
+    <form-cliente-app
+        *ngIf="isShowBuscaCliente"
+        (enviaDadosFormularioEvent)="recebeDadosFormulario($event)"
+        nomeBotao="Buscar"
+        [formCliente]="formCliente"
+    ></form-cliente-app>
+
+    <table class="table table-borderless mt-2" >
+        <tbody>
+            <tr *ngFor="let item of listaCliente" (click)="selecionaCliente(item)" class="maozinha">
+                <td>{{ item.nome }}</td>
+                <td>{{ item.dataNascimento | date:"dd/MM/yyyy"}}</td>
+            </tr>
+        </tbody>
+    </table>
+</modal-app>
+
+<modal-app
+    tituloModal="Cadastrar Novo Cliente"
+    idModal="adicionaCliente"
+    [modalEvent]="controleModaisAndBotoes.modalEventAdicionaCliente"
+    [listaBotao]="controleModaisAndBotoes.listaBotaoAdicionaCliente">
+    <form-cliente-app
+        *ngIf="isShowNovoCliente"
+        (enviaDadosFormularioEvent)="recebeDadosFormulario($event)"
+        nomeBotao="Salvar"
+        [formCliente]="formCliente"
+    ></form-cliente-app>
+</modal-app>
+
+<modal-app
+    tituloModal="Adicionar Procedimento"
+    idModal="adicionaProcedimento"
+    [modalEvent]="controleModaisAndBotoes.modalEventAdicionaProcedimento"
+    [listaBotao]="controleModaisAndBotoes.listaBotaoAdicionaProcedimento"
+>
+    <lista-procedimento-app
+        (enviaProcedimentoSelecionadoEvent)="recebeProcedimentoSelecionado($event)"
+        [inicializarTelaSubject]="inicializarTelaListaProcedimentoSubject"
+    ></lista-procedimento-app> 
+</modal-app>
+
+<modal-app
+    tituloModal="Confirmação"
+    idModal="confirmacao"
+    [modalEvent]="controleModaisAndBotoes.modalEventConfirmacaoAtendimento"
+    [listaBotao]="controleModaisAndBotoes.listaBotaoModalConfirmacao">
+    <div class="row">
+        <div class="col" *ngIf="atendimentoValidado.listaAtendimentoConflitante.length > 0; else confirmacao">
+            <p>O seu atendimento possui conflito com algum outro atendimento(s) do(a) mesmo(a) profissional </p>
+            <p>Com o botão <strong>Buscar Agenda</strong> você consegue verificar a lista de atendimentos do dia.</p>
+        </div>
+        <ng-template #confirmacao>
+            <div class="col">
+                <span>Deseja confirmar o atendimento do procedimento para {{ atendimentoValidado?.atendimentoSolicitado?.dataHoraAtendimento | date: "dd/MM/yyyy 'às' HH:mm" }}?</span>
+            </div>
+        </ng-template>
+    </div>
+    
+
+
+</modal-app>

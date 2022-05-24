@@ -1,0 +1,49 @@
+<div class="row">
+    <div class="col">
+        <div class="list-group" id="list-tab" role="tablist" *ngIf="listaProcedimento.length > 0;else semProcedimento">
+            <a
+                *ngFor="let item of listaProcedimento"
+                class="list-group-item list-group-item-action maozinha"
+                (click)="buscaDadosProfissional(item)"
+                [ngClass]="{'active':procedimento === item}"
+            >
+                <div class="row">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ item.nome }}</h6>
+                        <small>{{ item.valor | currency: 'BRL' }}</small>
+                    </div>
+                    <small>Duração: {{ mostrarDuracao(item.tempoDuracao) }} </small>
+                </div>
+            </a>
+        </div>
+        <ng-template #semProcedimento>
+            <div class="list-group" id="list-tab" role="tablist" >
+                <a class="list-group-item list-group-item-action" >
+                    <div class="row">
+                        <div class="d-flex w-100 justify-content-between">
+                            <span class="mb-1">Não possui procedimento cadastrado</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </ng-template>
+    </div>
+    <div class="col">
+        <div class="list-group" id="list-tab" role="tablist">
+            <a
+                class="list-group-item list-group-item-action maozinha"
+                *ngFor="let item of listaFuncionario"
+                (click)="selecionaFuncionario(item)"
+                [ngClass]="{'active':funcionario === item}"
+            >
+                <div class="row">
+                    <div class="col-7">{{ item.nome }}</div>
+                </div>
+            </a>
+        </div>
+        
+    </div>
+</div>
+<div class="col-4 mt-2">
+    <button type="button" (click)="addProcedimentoLista()" class="btn btn-primary">Adicionar</button>
+</div>

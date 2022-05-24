@@ -1,0 +1,358 @@
+<div class="row">
+    <div class="col-sm-4">
+        <div class="list-group">
+            <a class="list-group-item list-group-item-action"
+                aria-current="true"
+                *ngFor="let item of listaAtendimentoDia"
+                [ngClass]="{'atendimento-selecionado': idAtendimentoSelecionado === item.id }"
+                >
+                <div class="row align-items-center g-0">
+                    <div class="col-sm-8 maozinha" (click)="selecionarAtendimento(item.id)">
+                        <div class="d-flex w-100 justify-content-between">
+                            <small>
+                                <strong class="mb-1">{{ item.dataHoraAtendimento | date: "dd/MM - HH:mm" }}</strong>
+                            </small>
+                        </div>
+                        <div>
+                            <small>Cliente: {{ item.cliente.nome }}</small>
+                        </div>
+                        <div>
+                            <small>Funcionário: {{ item.funcionario.nome }}</small>
+                        </div>
+                        <div>
+                            <small>Estado: {{ item.estadoAtendimento.toString().toLocaleLowerCase() }}</small>
+                        </div>
+                    </div>
+                    <div
+                        class="col icone-abrir"
+                        title="Finalizar atendimento"
+                        (click)="abrirModalConfirmacao('FINALIZAR',item.id)">
+                        <i class="bi bi-check-circle" 
+                        *ngIf="item.estadoAtendimento.toString() !== 'FINALIZADO'"></i>
+                    </div>
+
+                    <div class="col icone-abrir" title="Desmarcar atendimento" (click)="abrirModalConfirmacao('DESMARCAR',item.id)">
+                        <i
+                            class="bi bi-x-circle"
+                            *ngIf="item.estadoAtendimento.toString() !== 'FINALIZADO'">
+                        </i>
+                    </div>
+
+                    <div class="col icone-abrir" title="Editar atendimento" (click)="habilitarEdicao(item.id)">
+                        <i class="bi bi-pencil-square"></i>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-sm-4" >
+        <form *ngIf="clienteDetalheForm" [formGroup]="clienteDetalheForm">
+            <div class="">
+                <div class="col-12">
+                    <div class="form-floating mb-2">
+                        <input type="text"  class="form-control" id="cliente" formControlName="cliente">
+                        <label for="floatingInput">Cliente</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+    
+                <div class="col-12" >
+                    <div class="form-floating  mb-2">
+                        <input type="datetime-local" class="form-control" id="dtAtendimento" formControlName="dataHoraAtendimento">
+                        <label for="dtAtendimento">Data Atendimento</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+                <div class="col-12" >
+                    <div class="form-floating mb-2">
+                        <input type="time" class="form-control" id="fimAtendimento" formControlName="fimAtendimento">
+                        <label for="dtAtendimento">Previsão Fim Atendimento</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+                
+                <div class="row g-0">
+                    <div class="col" >
+                        <div class="form-floating mb-2 me-2">
+                            <input type="text" class="form-control" id="valor" formControlName="valor">
+                            <label for="floatingInput">valor</label>
+                            <span class="bloquea"></span> 
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="desconto" formControlName="desconto" >
+                            <label for="floatingInput">Desconto</label>
+                            <span class="bloquea"></span> 
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control" id="funcionario" formControlName="funcionario">
+                        <label for="floatingInput">Funcionário</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <span>Procedimentos</span>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <tbody>
+                            <tr *ngFor="let item of atendimentoDetalhe.procedimentos">
+                                <td>{{ item.nome }}</td>
+                                <td>{{ item.valor | currency:'BRL'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>    
+    </div>
+    <div class="col-sm-4">
+        <calendario-app (diaSelecionadoEvent)="recebeDiaSelecionadoEvent($event)"></calendario-app>
+    </div>
+</div>
+
+<!-- MODAL DE DETALHAR
+<modal-app
+    tituloModal="Detalhe do Atendimento"
+    idModal="detalhe"
+    [modalEvent]="modalEventDetalheAtendimento"
+    [listaBotao]="listaBotaoModalDetalheAtendimento"
+>
+    <form [formGroup]="clienteDetalheForm">
+        <div class="" *ngIf="showDetalhe" >
+            <div class="row g-0" >
+                <div class="col">
+                    <div class="form-floating mb-2">
+                        <input type="text"  class="form-control" id="cliente" formControlName="cliente">
+                        <label for="floatingInput">Cliente</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-0" >
+                <div class="col" >
+                    <div class="form-floating mb-2 me-2">
+                        <input type="datetime-local" class="form-control" id="dtAtendimento" formControlName="dataHoraAtendimento">
+                        <label for="dtAtendimento">Data Atendimento</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+                <div class="col" >
+                    <div class="form-floating mb-2">
+                        <input type="time" class="form-control" id="fimAtendimento" formControlName="fimAtendimento">
+                        <label for="dtAtendimento">Previsão Fim Atendimento</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-0">
+                <div class="col" >
+                    <div class="form-floating mb-2 me-2">
+                        <input type="text" class="form-control" id="valor" formControlName="valor">
+                        <label for="floatingInput">valor</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control" id="desconto" formControlName="desconto">
+                        <label for="floatingInput">Desconto</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-0">
+                <div class="col">
+                    <div class="form-floating mb-2 me-2">
+                        <input type="text" class="form-control" id="funcionario" formControlName="funcionario">
+                        <label for="floatingInput">Funcionário</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <span>Procedimentos</span>
+                        </div>
+                        <div class="col" style="text-align: right;">
+                            <a [routerLink]="[]" (click)="adicionaProcedimento()">
+                                <i class="bi bi-plus-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <table class="table">
+                         <tbody>
+                             <tr *ngFor="let item of atendimentoDetalhe.procedimentos">
+                                 <td>{{ item.nome }}</td>
+                                 <td>{{ item.valor}}</td>
+                                 <td style="text-align: right;">
+                                    <a [routerLink]="[]" title="Remover procedimento" (click)="removeProcedimento(item)">
+                                        <i class="bi bi-x-lg" ></i>
+                                    </a>
+                                </td>
+                                <span class="bloquea"></span> 
+                             </tr>
+                         </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</modal-app> -->
+
+<!-- MODAL DE EDICAO -->
+<modal-app
+    tituloModal="Editar Atendimento"
+    idModal="editarAtendimento"
+    [modalEvent]="controleModaisBotoes.modalEventEdicaoAtendimento"
+    [listaBotao]="controleModaisBotoes.listaBotoesModalEdicao"
+>
+    <form *ngIf="atendimentoEdicaoForm" [formGroup]="atendimentoEdicaoForm" >
+        <div class="" >
+            <div class="row g-0" >
+                <div class="col">
+                    <div class="form-floating mb-2">
+                        <input type="text"  class="form-control" id="cliente" formControlName="cliente">
+                        <label for="floatingInput">Cliente</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-0" >
+                <div class="col" >
+                    <div class="form-floating mb-2 me-2">
+                        <input type="datetime-local" class="form-control" id="dtAtendimento" formControlName="dataHoraAtendimento">
+                        <label for="dtAtendimento">Data Atendimento</label>
+                    </div>
+                </div>
+                <div class="col" >
+                    <div class="form-floating mb-2">
+                        <input type="time" class="form-control" id="fimAtendimento" formControlName="fimAtendimento">
+                        <label for="dtAtendimento">Previsão Fim Atendimento</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-0">
+                <div class="col" >
+                    <div class="form-floating mb-2 me-2">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="valor"
+                            formControlName="valor"
+                            [mask]="getMask('REAL')"
+                            prefix="R$ "
+                            >
+                        <label for="floatingInput">valor</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-2">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="desconto"
+                            formControlName="desconto"
+                            (ngModelChange)="efetuaCalculoAtendimento()"
+                            mask="percent"
+                            suffix="%"
+                            >
+                        <label for="floatingInput">Desconto</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-0">
+                <div class="col">
+                    <div class="form-floating mb-2 me-2">
+                        <input type="text" class="form-control" id="funcionario" formControlName="funcionario">
+                        <label for="floatingInput">Funcionário</label>
+                        <span class="bloquea"></span> 
+                    </div>
+                </div> 
+                <div class="col">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <span>Procedimentos</span>
+                        </div>
+                        <div class="col" style="text-align: right;">
+                            <a [routerLink]="[]" (click)="adicionaProcedimento()">
+                                <i class="bi bi-plus-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <table class="table" >
+                         <tbody>
+                             <tr *ngFor="let item of listaProcedimentoEdita">
+                                 <td>{{ item.nome }}</td>
+                                 <td>{{ item.valor}}</td>
+                                 <td style="text-align: right;">
+                                    <a [routerLink]="[]" title="Remover procedimento" (click)="removeProcedimento(item)">
+                                        <i class="bi bi-x-lg" ></i>
+                                    </a>
+                                </td>
+                             </tr>
+                         </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</modal-app>
+
+<!-- MODAL DE PROCEDIMENTO -> DETALHE -> EDITAR -->
+<modal-app
+    idModal="procedimento"
+    tituloModal="Procedimentos"
+    [listaBotao]="controleModaisBotoes.listaBotoesModalProcedimento"
+    [modalEvent]="controleModaisBotoes.modalEventListaProcedimento"
+
+>
+ <lista-procedimento-app
+        (enviaProcedimentoSelecionadoEvent)="recebeProcedimentoSelecionado($event)"
+        [inicializarTelaSubject]="controleModaisBotoes.inicializarProcedimentoSubject"
+    ></lista-procedimento-app> 
+</modal-app>
+
+<!-- MODAL DE CONFIRMAÇÃO -->
+<modal-app
+    idModal="modalConfirmacao"
+    tituloModal="Confirmação"
+    [listaBotao]="controleModaisBotoes.listaBotoesModalConfirmacao"
+    [modalEvent]="controleModaisBotoes.modalEventConfirmacao"
+>
+    <p>{{ textoModalConfirmacao }}</p>
+</modal-app>
+
+<!-- MODAL DE CONFIRMAÇÃO DE ATENDIMENTO COM CONFLITO -->
+<modal-app
+idModal="conflito"
+    tituloModal="Alerta de conflito de atendimento"
+    [listaBotao]="controleModaisBotoes.listaBotoesModalAlertaConflitoEdicao"
+    [modalEvent]="controleModaisBotoes.modalEventAlertaConflitoEdicao"
+>
+    <div class="row" *ngFor="let item of atendimentoValidado.listaAtendimentoConflitante">
+        <p>Esse atendimento entra em conflito com os seguintes agendamentos.</p>
+        <div class="col">
+            {{ item.dataHoraAtendimento | date: "dd/MM/YYYY ' - ' HH:mm" }} até {{item.dataHoraFimAtendimento | date: 'HH:mm'}}
+        </div>
+        <p class="mt-3">Deseja gravar mesmo assim?</p>
+    </div>
+</modal-app>

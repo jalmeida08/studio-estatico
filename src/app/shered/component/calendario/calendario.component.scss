@@ -1,0 +1,91 @@
+main {
+    max-width: max-content;
+    background-color: #fff;
+    border-radius: 8px;
+  }
+  
+  /* TÍTULO - MÊS */
+  .titulo-mes {
+    color: #000;
+    text-align: center;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  
+  /* GRID - UTILIZADO PARA FORMAR SEMANAS E DIAS DA SEMANA */
+  .dias-semana,
+  .date-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+  
+  /* DIAS DA SEMANA */
+  .dias-semana {
+    margin-top: 1.25em;
+  }
+  
+  .dias-semana > * {
+    font-size: 0.7em;
+    color: #000;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    font-variant: small-caps;
+    text-align: center;
+  }
+  
+  /* Dates */
+  .date-grid {
+    margin-top: 0.5em;
+  }
+  
+  /* Style for each day */
+  .date-grid button {
+    position: relative;
+    border: 0;
+    width: 4.5ch;
+    height: 4.5ch;
+    border-radius: 20%;
+    background-color: transparent;
+    color: #000;
+  }
+  
+  .date-grid button:hover,
+  .date-grid button:focus {
+    outline: none;
+    background-color: #000;
+    color: #FFF;
+  }
+  
+  .dia-semana-selecionada {
+    outline: none;
+    background-color: #000;
+    color: #FFF;
+  }
+  
+  /* Positioning the first day */
+  .init-calendar-dom:first-child {
+    grid-column: 1;
+  }
+  .init-calendar-seg:first-child {
+    grid-column: 2;
+  }
+  .init-calendar-ter:first-child {
+    grid-column: 3;
+  }
+  .init-calendar-qua:first-child {
+    grid-column: 4;
+  }
+  .init-calendar-qui:first-child {
+    grid-column: 5;
+  }
+  .init-calendar-sex:first-child {
+    grid-column: 6;
+  }
+  .init-calendar-sab:first-child {
+    grid-column: 7;
+  }
+  
+  .seta-calendario-direita { font-size: 2em }
+  .seta-calendario-esquerda { font-size: 2em }
+  .seta-calendario-direita:hover, .seta-calendario-esquerda:hover { cursor: pointer; color: rgba(0, 0, 0, .4);}
